@@ -6,7 +6,6 @@ const TRUE_DATA = [[1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submissionFile').addEventListener('change', handleSubmissionFile);
-    document.getElementById('compareBtn').addEventListener('click', compareFiles);
 });
 
 /**
@@ -17,17 +16,30 @@ async function handleSubmissionFile(event) {
     if (!file) return;
 
     try {
-        if (file.name.endsWith('.mat')) {
-            await readMatFile(file);
-        } else if (file.name.endsWith('.csv')) {
-            await readCsvFile(file);
-        } else {
-            throw new Error('请上传.mat或.csv格式的文件');
+        // 清除之前的结果显示
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.style.display = 'none';
+        
+        // 验证文件名
+        if (file.name !== 'submission.mat' && file.name !== 'submission.csv') {
+            throw new Error('文件名错误：请确保文件名为 submission.mat 或 submission.csv');
         }
-        checkEnableCompare();
+        
+        if (file.name === 'submission.mat') {
+            await readMatFile(file);
+        } else if (file.name === 'submission.csv') {
+            await readCsvFile(file);
+        }
+        
+        // 直接进行比较
+        await compareFiles();
     } catch (error) {
         console.error('文件处理错误:', error);
         alert(`文件处理错误: ${error.message}`);
+        
+        // 清空文件输入框，允许重新选择文件
+        const fileInput = document.getElementById('submissionFile');
+        fileInput.value = '';
     }
 }
 
@@ -127,14 +139,6 @@ function readCsvFile(file) {
             }
         });
     });
-}
-
-/**
- * 检查是否启用比较按钮
- */
-function checkEnableCompare() {
-    const compareBtn = document.getElementById('compareBtn');
-    compareBtn.disabled = !submissionData;
 }
 
 /**
