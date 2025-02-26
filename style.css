@@ -1,0 +1,292 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    padding-top: 120px;
+    padding-bottom: 100px;
+}
+
+/* 主容器 */
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+/* 标题样式 */
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+h3 {
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+/* 上传区域 */
+.upload-section {
+    margin-bottom: 30px;
+}
+
+.upload-box {
+    border: 2px dashed #bdc3c7;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+    border-color: #3498db;
+    background-color: #f7f9fc;
+}
+
+/* 文件输入框 */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 按钮样式 */
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* 结果区域 */
+.results {
+    display: none;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+#accuracy {
+    font-size: 1.5em;
+    color: #2c3e50;
+    text-align: center;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    button {
+        padding: 10px 20px;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.results {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 文件上传状态提示 */
+.upload-box.dragover {
+    border-color: #3498db;
+    background-color: #f7f9fc;
+}
+
+/* 准确率显示样式 */
+.accuracy-high {
+    color: #27ae60;
+}
+
+.accuracy-medium {
+    color: #f39c12;
+}
+
+.accuracy-low {
+    color: #e74c3c;
+}
+
+/* 页脚样式 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9em;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #2ecc71;
+}
+
+/* 页眉样式 */
+.site-header {
+    background-color: #2c3e50;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    margin-left: auto;
+}
+
+.header-logo {
+    width: 60px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.header-text {
+    color: white;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+.header-text p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* GitHub 按钮样式 */
+.github-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.github-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.github-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.github-button span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .header-text h2 {
+        font-size: 1.2em;
+    }
+    
+    .header-text p {
+        font-size: 0.8em;
+    }
+    
+    .github-button {
+        padding: 6px 12px;
+    }
+    
+    .github-button svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .github-button span {
+        font-size: 12px;
+    }
+} 
