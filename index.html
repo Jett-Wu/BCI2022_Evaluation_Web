@@ -3,23 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提交结果验证器</title>
+    <title>BCI2022 - 提交结果验证器</title>
     <link rel="stylesheet" href="style.css">
     <!-- 添加必要的库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script type="text/javascript" src="./mat4js.read.min.js"></script>
+    <script src="dna-background.js" defer></script>
 </head>
 <body>
+    <canvas id="dnaBackground"></canvas>
     <header class="site-header">
         <div class="header-content">
             <div class="header-left">
                 <img src="./BCI_Logo.png" alt="BCI Logo" class="header-logo">
                 <div class="header-text">
                     <h2>海南大学脑机接口技术协会</h2>
-                    <p>Hainan University Brain-Computer Interface Association</p>
+                    <p class="en-text">Hainan University Brain-Computer Interface Association</p>
                 </div>
             </div>
             <div class="header-right">
+                <a href="https://github.com/Jett-Wu/BCI2022_Demo" 
+                   class="github-button demo-button" 
+                   target="_blank"
+                   title="BCI2022 Demo">
+                    <svg height="32" viewBox="0 0 24 24" width="32">
+                        <path fill="white" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    <span>BCI2022_Demo</span>
+                </a>
                 <a href="https://github.com/Jett-Wu/BCI2022_Evaluation_Web" 
                    class="github-button" 
                    target="_blank"
@@ -34,25 +45,37 @@
     </header>
 
     <div class="container">
-        <h1>提交结果验证器</h1>
-        
-        <div class="upload-section">
-            <div class="upload-box">
-                <h3>上传提交文件 (submission.mat 或 submission.csv)</h3>
-                <input type="file" id="submissionFile" accept=".mat,.csv">
-            </div>
+        <div class="title-panel">
+            <h1>BCI2022 - 提交结果验证器</h1>
         </div>
+        
+        <div class="main-panel">
+            <div class="upload-section">
+                <div class="upload-box">
+                    <h3>上传提交文件 <span>(.mat 或 .csv格式)</span></h3>
+                    <p class="upload-hint">支持任意文件名，但需要符合指定的数据格式</p>
+                    <div class="upload-area">
+                        <img src="upload-icon.svg" alt="上传" class="upload-icon">
+                        <p>点击或拖动文件到此区域进行上传</p>
+                        <input type="file" id="submissionFile" accept=".mat,.csv">
+                    </div>
+                </div>
+            </div>
 
-        <div class="results" id="results">
-            <h3>比较结果：</h3>
-            <p id="accuracy"></p>
-            <div id="details"></div>
+            <div class="results" id="results">
+                <h3>比较结果：</h3>
+                <div class="result-header">
+                    <p id="accuracy"></p>
+                    <p id="submit-time" class="submit-time"></p>
+                </div>
+                <div id="details"></div>
+            </div>
         </div>
     </div>
     
     <footer>
-        <p>BCI2022_Evaluation_Web</p>
-        <p>Created by <a href="https://github.com/Jett-Wu" target="_blank">Jett-Wu</a></p>
+        <p class="en-text">BCI2022_Evaluation_Web</p>
+        <p>Created by <a href="https://github.com/Jett-Wu" target="_blank" class="en-text">Jett-Wu</a></p>
     </footer>
     
     <script src="script.js"></script>

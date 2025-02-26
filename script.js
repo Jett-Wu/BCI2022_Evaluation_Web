@@ -5,43 +5,76 @@ const TRUE_DATA = [[1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('submissionFile').addEventListener('change', handleSubmissionFile);
-});
+    const uploadArea = document.querySelector('.upload-area');
+    const fileInput = document.getElementById('submissionFile');
 
-/**
- * 处理提交文件的上传
- */
-async function handleSubmissionFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    // 处理拖拽事件
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
 
-    try {
-        // 清除之前的结果显示
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // 添加视觉反馈
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.add('dragover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.remove('dragover');
+        });
+    });
+
+    // 处理文件拖放
+    uploadArea.addEventListener('drop', handleDrop);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        fileInput.files = dt.files;
+        
+        // 触发change事件以处理文件
+        const event = new Event('change');
+        fileInput.dispatchEvent(event);
+    }
+
+    // 保持原有的文件选择处理逻辑
+    fileInput.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // 清除之前的错误提示和结果显示
+        clearErrorMessage();
         const resultsDiv = document.getElementById('results');
         resultsDiv.style.display = 'none';
         
-        // 验证文件名
-        if (file.name !== 'submission.mat' && file.name !== 'submission.csv') {
-            throw new Error('文件名错误：请确保文件名为 submission.mat 或 submission.csv');
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        
+        try {
+            if (fileExtension === 'csv') {
+                await readCsvFile(file);
+            } else if (fileExtension === 'mat') {
+                await readMatFile(file);
+            } else {
+                throw new Error('不支持的文件格式：请上传.mat或.csv文件');
+            }
+            
+            // 文件读取成功后进行比较
+            await compareFiles();
+            
+        } catch (error) {
+            showErrorMessage(error.message);
+            // 清除文件选择
+            e.target.value = '';
         }
-        
-        if (file.name === 'submission.mat') {
-            await readMatFile(file);
-        } else if (file.name === 'submission.csv') {
-            await readCsvFile(file);
-        }
-        
-        // 直接进行比较
-        await compareFiles();
-    } catch (error) {
-        console.error('文件处理错误:', error);
-        alert(`文件处理错误: ${error.message}`);
-        
-        // 清空文件输入框，允许重新选择文件
-        const fileInput = document.getElementById('submissionFile');
-        fileInput.value = '';
-    }
-}
+    });
+});
 
 /**
  * 读取MAT文件
@@ -53,23 +86,15 @@ async function readMatFile(file) {
         reader.onload = async function(event) {
             try {
                 const buffer = event.target.result;
-                console.log('读取到的文件大小:', buffer.byteLength, '字节');
-                
-                // 使用mat4js读取MAT文件
                 const matResult = mat4js.read(buffer);
-                console.log('MAT文件解析结果:', matResult);
                 
-                // 检查header
-                console.log('MAT文件头部:', matResult.header);
-                
-                // 提取test_label数据
+                // 检查MAT文件的数据格式
                 if (!matResult.data || !matResult.data.test_label) {
-                    throw new Error('未找到test_label变量');
+                    throw new Error('MAT文件格式错误：未找到test_label变量');
                 }
 
                 // 获取test_label数据
                 let testLabel = matResult.data.test_label;
-                console.log('原始test_label数据:', testLabel);
 
                 // 确保数据是一维数组
                 if (Array.isArray(testLabel) && Array.isArray(testLabel[0])) {
@@ -83,12 +108,8 @@ async function readMatFile(file) {
                     throw new Error(`数据长度不正确: 期望160，实际${submissionData.length}`);
                 }
 
-                console.log('MAT文件读取成功:', submissionData);
-                console.log('数据长度:', submissionData.length);
-                console.log('数据样例（前5个）:', submissionData.slice(0, 5));
                 resolve();
             } catch (error) {
-                console.error('MAT文件处理详细错误:', error);
                 reject(new Error(`MAT文件处理失败: ${error.message}`));
             }
         };
@@ -104,19 +125,21 @@ async function readMatFile(file) {
 function readCsvFile(file) {
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
-            header: true, // CSV有表头
+            header: true,
             complete: (results) => {
                 try {
+                    if (!results.data || results.data.length < 2) {
+                        throw new Error('CSV文件格式错误：数据不能为空');
+                    }
+
                     // 从CSV数据中提取Label列的值
                     submissionData = results.data
-                        .map(row => row.Label) // 获取Label列
-                        .filter(cell => cell !== undefined && cell !== '') // 移除空值
+                        .map(row => row.Label)
+                        .filter(cell => cell !== undefined && cell !== '')
                         .map(cell => {
-                            // 转换为数字
                             const num = parseInt(cell, 10);
                             if (isNaN(num)) {
-                                console.error('无法转换的值:', cell);
-                                throw new Error(`无法将 "${cell}" 转换为数字`);
+                                throw new Error(`CSV格式错误：无法将 "${cell}" 转换为数字`);
                             }
                             return num;
                         });
@@ -126,9 +149,6 @@ function readCsvFile(file) {
                         throw new Error(`数据长度不正确: 期望160，实际${submissionData.length}`);
                     }
 
-                    console.log('CSV文件读取成功:', submissionData);
-                    console.log('数据长度:', submissionData.length);
-                    console.log('数据样例（前5个）:', submissionData.slice(0, 5));
                     resolve();
                 } catch (error) {
                     reject(new Error(`CSV数据处理失败: ${error.message}`));
@@ -209,10 +229,11 @@ function calculateAccuracy(truth, submission) {
 function displayResults(accuracy) {
     const resultsDiv = document.getElementById('results');
     const accuracyP = document.getElementById('accuracy');
+    const submitTimeP = document.getElementById('submit-time');
     
     resultsDiv.style.display = 'block';
     
-    // 根据准确率设置不同的颜色
+    // 设置准确率颜色
     let colorClass = '';
     if (accuracy >= 0.7) {
         colorClass = 'accuracy-high';
@@ -227,6 +248,87 @@ function displayResults(accuracy) {
     // 添加新的颜色类
     accuracyP.classList.add(colorClass);
     
-    // 显示准确率，保留6位小数
+    // 显示准确率
     accuracyP.textContent = `准确率: ${(accuracy * 100).toFixed(6)}%`;
+
+    // 显示提交时间
+    const now = new Date();
+    const timeString = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+    submitTimeP.textContent = `提交时间: ${timeString}`;
+}
+
+function showErrorMessage(message) {
+    let errorDiv = document.querySelector('.error-message');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        document.querySelector('.upload-box').appendChild(errorDiv);
+    }
+    errorDiv.style.display = 'block';
+    errorDiv.textContent = message;
+}
+
+function clearErrorMessage() {
+    const errorDiv = document.querySelector('.error-message');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+}
+
+async function validateCSVFormat(file) {
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            complete: function(results) {
+                // 检查CSV数据格式是否正确
+                if (!results.data || results.data.length < 2) {
+                    reject(new Error('CSV文件格式错误：数据不能为空'));
+                    return;
+                }
+                
+                // 这里添加更多的CSV格式验证逻辑
+                // 例如检查列数、数据类型等
+                
+                resolve(results);
+            },
+            error: function(error) {
+                reject(new Error('CSV文件解析错误：' + error.message));
+            }
+        });
+    });
+}
+
+async function validateMATFormat(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const data = await mat4js.read(e.target.result);
+                
+                // 检查MAT文件的数据格式是否正确
+                if (!data || typeof data !== 'object') {
+                    reject(new Error('MAT文件格式错误：无法读取数据'));
+                    return;
+                }
+                
+                // 这里添加更多的MAT格式验证逻辑
+                // 例如检查必要的变量是否存在、数据维度是否正确等
+                
+                resolve(data);
+            } catch (error) {
+                reject(new Error('MAT文件解析错误：' + error.message));
+            }
+        };
+        reader.onerror = function() {
+            reject(new Error('文件读取错误'));
+        };
+        reader.readAsArrayBuffer(file);
+    });
 } 

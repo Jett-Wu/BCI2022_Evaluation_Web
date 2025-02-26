@@ -7,8 +7,11 @@
 }
 
 body {
-    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
+    background: linear-gradient(135deg, rgba(236, 239, 241, 0.95) 0%, rgba(176, 190, 197, 0.95) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,20 +22,47 @@ body {
 
 /* 主容器 */
 .container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
+    padding: 0 20px;  /* 改用padding来控制两边间距 */
+    background-color: transparent;  /* 移除背景色 */
+    box-shadow: none;  /* 移除阴影 */
+}
+
+/* 标题面板样式 */
+.title-panel {
+    background-color: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.title-panel h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 2.4em;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+/* 主面板样式 */
+.main-panel {
+    background-color: white;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* 标题样式 */
 h1 {
     color: #2c3e50;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2em;
+    margin-bottom: 40px;
+    font-size: 2.2em;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 h3 {
@@ -47,26 +77,82 @@ h3 {
 }
 
 .upload-box {
-    border: 2px dashed #bdc3c7;
     padding: 20px;
-    border-radius: 10px;
     text-align: center;
+}
+
+/* 上传区域标题样式 */
+.upload-box h3 {
+    color: #2c3e50;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* 文件格式提示加粗 */
+.upload-box h3 span {
+    font-weight: 700;
+    color: #34495e;
+    font-family: "Times New Roman", serif;
+}
+
+/* 上传区域样式 */
+.upload-area {
+    border: 2.5px dashed #bdc3c7;
+    border-radius: 12px;
+    padding: 48px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    position: relative;
+    margin-top: 20px;
+}
+
+.upload-area:hover {
+    border-color: #3498db;
+    background-color: #f0f4f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+}
+
+.upload-area.dragover {
+    border-color: #3498db;
+    background-color: #ebf5fb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+/* 上传图标样式 */
+.upload-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 20px;
+    opacity: 0.7;
     transition: all 0.3s ease;
 }
 
-.upload-box:hover {
-    border-color: #3498db;
-    background-color: #f7f9fc;
+.upload-area:hover .upload-icon {
+    opacity: 1;
+    transform: scale(1.05);
 }
 
-/* 文件输入框 */
-input[type="file"] {
-    display: block;
+/* 上传区域文字样式 */
+.upload-area p {
+    color: #34495e;
+    font-size: 1.1em;
+    margin: 15px 0;
+    font-weight: 500;
+}
+
+/* 隐藏原始文件输入框但保持可访问性 */
+.upload-area input[type="file"] {
+    position: absolute;
     width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
     cursor: pointer;
 }
 
@@ -102,26 +188,72 @@ button:disabled {
     background-color: #f8f9fa;
 }
 
-#accuracy {
-    font-size: 1.5em;
-    color: #2c3e50;
-    text-align: center;
+/* 结果头部样式 */
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin: 15px 0;
+}
+
+.submit-time {
+    color: #34495e;
+    font-size: 1.1em;
+    font-family: "Times New Roman", serif;
+}
+
+/* 修改准确率样式以适应新布局 */
+#accuracy {
+    font-size: 1.3em;
+    color: #2c3e50;
     font-weight: bold;
+    margin: 0;
+    font-family: "Times New Roman", serif;
 }
 
 /* 响应式设计 */
 @media (max-width: 480px) {
-    .container {
+    .title-panel {
         padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .title-panel h1 {
+        font-size: 1.8em;
+    }
+
+    .main-panel {
+        padding: 25px;
+    }
+
+    .container {
+        padding: 25px;
     }
 
     h1 {
-        font-size: 1.5em;
+        font-size: 1.8em;
+        margin-bottom: 30px;
     }
 
-    button {
-        padding: 10px 20px;
+    .upload-box h3, .results h3 {
+        font-size: 1.2em;
+    }
+
+    .upload-area {
+        padding: 32px 20px;
+    }
+
+    .upload-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .upload-hint, .upload-area p, .submit-time {
+        font-size: 1em;
+    }
+
+    #accuracy {
+        font-size: 1.2em;
     }
 }
 
@@ -141,10 +273,212 @@ button:disabled {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* 文件上传状态提示 */
-.upload-box.dragover {
-    border-color: #3498db;
-    background-color: #f7f9fc;
+/* 准确率显示样式 */
+.accuracy-high {
+    color: #27ae60;
+}
+
+.accuracy-medium {
+    color: #f39c12;
+}
+
+.accuracy-low {
+    color: #e74c3c;
+}
+
+/* 页脚样式 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9em;
+}
+
+footer p {
+    margin: 5px 0;
+    font-family: "Times New Roman", serif;
+}
+
+footer a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #2ecc71;
+}
+
+/* 页眉样式 */
+.site-header {
+    background-color: #2c3e50;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    display: flex;
+    gap: 10px;  /* 按钮之间的间距 */
+    align-items: center;
+}
+
+.header-logo {
+    width: 60px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.header-text {
+    color: white;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+.header-text p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    opacity: 0.8;
+    font-family: "Times New Roman", serif;
+}
+
+/* GitHub 按钮样式 */
+.github-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.github-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.github-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.github-button span {
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Times New Roman", serif;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .header-text h2 {
+        font-size: 1.2em;
+    }
+    
+    .header-text p {
+        font-size: 0.8em;
+    }
+    
+    .github-button {
+        padding: 6px 12px;
+    }
+    
+    .github-button svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .github-button span {
+        font-size: 12px;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+    
+    .demo-button svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* 提示文字样式优化 */
+.upload-hint {
+    color: #666;
+    font-size: 1.1em;
+    margin: 12px 0 20px;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* 错误提示样式 */
+.error-message {
+    color: #e74c3c;
+    background-color: #fde8e7;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+}
+
+/* 英文和数字字体样式 */
+.en-text {
+    font-family: "Times New Roman", serif;
+}
+
+/* 修改页眉英文样式 */
+.header-text p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    opacity: 0.8;
+    font-family: "Times New Roman", serif;
+}
+
+/* 准确率和时间显示样式 */
+#accuracy, .submit-time {
+    font-family: "Times New Roman", serif;
+}
+
+/* 文件格式提示 */
+.upload-box h3 span {
+    font-weight: 700;
+    color: #34495e;
+    font-family: "Times New Roman", serif;
+}
+
+/* 页脚样式 */
+footer p {
+    margin: 5px 0;
+    font-family: "Times New Roman", serif;
 }
 
 /* 准确率显示样式 */
@@ -237,6 +571,7 @@ footer a:hover {
     margin: 5px 0 0;
     font-size: 0.9em;
     opacity: 0.8;
+    font-family: "Times New Roman", serif;
 }
 
 /* GitHub 按钮样式 */
@@ -265,6 +600,7 @@ footer a:hover {
 .github-button span {
     font-size: 14px;
     font-weight: 500;
+    font-family: "Times New Roman", serif;
 }
 
 /* 响应式设计 */
@@ -289,4 +625,48 @@ footer a:hover {
     .github-button span {
         font-size: 12px;
     }
+}
+
+/* 提示文字样式优化 */
+.upload-hint {
+    color: #666;
+    font-size: 1.1em;
+    margin: 12px 0 20px;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* 错误提示样式 */
+.error-message {
+    color: #e74c3c;
+    background-color: #fde8e7;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+}
+
+/* DNA背景画布样式 */
+#dnaBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.1;  /* 调整透明度使其不影响内容可读性 */
+}
+
+/* Demo按钮特殊样式 */
+.demo-button {
+    background-color: rgba(255, 255, 255, 0.1);  /* 与Star按钮相同的背景色 */
+}
+
+.demo-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);  /* 与Star按钮相同的悬停背景色 */
+}
+
+.demo-button svg {
+    width: 18px;
+    height: 18px;
 } 
